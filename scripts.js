@@ -1,5 +1,8 @@
 let nome = "";
 let mensagens = [];
+let privacy = "";
+let paraUsuario = "";
+    
 
 
 perguntarNome();
@@ -30,45 +33,53 @@ function printMessages(){
     for(let i = 0; i < mensagens.length; i++){
 
         if(mensagens[i].type === "status"){
-
             mensagemDisplay.innerHTML += `<div class="mensagem status">
             <div class="hora">(${mensagens[i].time})</div>
             <div class="texto"> <span>${mensagens[i].from}</span> ${mensagens[i].text}</div>
             </div>`;
-
+        }
             
-        }else if(mensagens[i].type === "private_message"){
+        else if(mensagens[i].type === "private_message" && (mensagens[i].from === nome) || mensagens[i].to === nome){
             mensagemDisplay.innerHTML += `<div class="mensagem private_message">
             <div class="hora">(${mensagens[i].time})</div>
             <div class="texto"> <span>${mensagens[i].from}</span> reservadamente para <span>${mensagens[i].to}</span>: ${mensagens[i].text}</div>
-            </div>`;
+            </div>`
 
+        }            
+            
 
-        }else{
-            mensagemDisplay.innerHTML += `<div class="mensagem">
-            <div class="hora">(${mensagens[i].time})</div>
-            <div class="texto"> <span>${mensagens[i].from}</span> para <span>${mensagens[i].to}</span>: ${mensagens[i].text}</div>
-            </div>`;
+        else{
+            if(mensagens[i].type === "message"){
+                mensagemDisplay.innerHTML += `<div class="mensagem">
+                <div class="hora">(${mensagens[i].time})</div>
+                <div class="texto"> <span>${mensagens[i].from}</span> para <span>${mensagens[i].to}</span>: ${mensagens[i].text}</div>
+                </div>`;}
+    
         }
-
-        
- 
+            
+        const divScroll = document.querySelector(".scroll");
+        divScroll.scrollIntoView();
     }
-
-   
+        
 }
+    
+         
+
 
 //ENVIA MENSAGEM DO USUÁRIO PARA A SALA
 function enviarMensagem(){
+
+    paraUsuario = destinatarioMensagem();
+   
     const mensagem  = document.querySelector(".mensagem-usuario").value;
     const d = new Date();
     let hora = d.toLocaleTimeString();
 
     const novaMensagem =   {
 		from: nome,
-		to: "Todos",
+		to: paraUsuario,
 		text: mensagem,
-		type: "message",
+		type: privacy,
 		time: hora
 	}
 
@@ -77,6 +88,24 @@ function enviarMensagem(){
 
 
 }
+
+function destinatarioMensagem(){
+    let destinatario;
+
+    const privado = prompt("É uma mensagem privada? S para sim ou N para não");
+
+    if(privado === "S"|| privado === "s"){
+        destinatario = prompt("Digite o nome do usuário para o qual a mensagem deve ser entregue:");
+        privacy = "private_message";
+        return destinatario;
+
+    }else if(privado === "N" || privado === "n"){
+        destinatario = "Todos";
+        privacy = "message"
+        return destinatario;
+    }
+}
+
 
 function errorGettingMessages(erro){
     console.log("Failed getting message");
