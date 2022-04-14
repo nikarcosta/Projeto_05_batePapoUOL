@@ -6,7 +6,7 @@ perguntarNome();
 getMessages();
 
 
-//FAZ O REQUEST BUSCAR AS MENSAGENS NA API
+//FAZ O REQUEST PARA BUSCAR AS MENSAGENS NA API
 function getMessages(){
     const promessa =  axios.get("https://mock-api.driven.com.br/api/v6/uol/messages");
     console.log(promessa);
@@ -22,7 +22,7 @@ function carregarDados(response){
 }
 
 
-//PRINT AS MENSAGENS NA TELA
+//IMPRIME AS MENSAGENS NA TELA
 function printMessages(){
     const mensagemDisplay = document.querySelector(".container");
     mensagemDisplay.innerHTML = "";
@@ -31,23 +31,23 @@ function printMessages(){
 
         if(mensagens[i].type === "status"){
 
-            mensagemDisplay.innerHTML += `<div class=".mensagem status">
-            <div class=".hora">${mensagens[i].time}</div>
-            <div class=".texto">${mensagens[i].from} ${mensagens[i].text}</div>
+            mensagemDisplay.innerHTML += `<div class="mensagem status">
+            <div class="hora">(${mensagens[i].time})</div>
+            <div class="texto"> <span>${mensagens[i].from}</span> ${mensagens[i].text}</div>
             </div>`;
 
             
         }else if(mensagens[i].type === "private_message"){
-            mensagemDisplay.innerHTML += `<div class=".mensagem private_message">
-            <div class=".hora">${mensagens[i].time}</div>
-            <div class=".texto">${mensagens[i].from} reservadamente para ${mensagens[i].to}: ${mensagens[i].text}</div>
+            mensagemDisplay.innerHTML += `<div class="mensagem private_message">
+            <div class="hora">(${mensagens[i].time})</div>
+            <div class="texto"> <span>${mensagens[i].from}</span> reservadamente para <span>${mensagens[i].to}</span>: ${mensagens[i].text}</div>
             </div>`;
 
 
         }else{
-            mensagemDisplay.innerHTML += `<div class=".mensagem">
-            <div class=".hora">${mensagens[i].time}</div>
-            <div class=".texto">${mensagens[i].from} para ${mensagens[i].to}: ${mensagens[i].text}</div>
+            mensagemDisplay.innerHTML += `<div class="mensagem">
+            <div class="hora">(${mensagens[i].time})</div>
+            <div class="texto"> <span>${mensagens[i].from}</span> para <span>${mensagens[i].to}</span>: ${mensagens[i].text}</div>
             </div>`;
         }
 
@@ -58,6 +58,7 @@ function printMessages(){
    
 }
 
+//ENVIA MENSAGEM DO USUÁRIO PARA A SALA
 function enviarMensagem(){
     const mensagem  = document.querySelector(".mensagem-usuario").value;
     const d = new Date();
@@ -71,8 +72,7 @@ function enviarMensagem(){
 		time: hora
 	}
 
-    const promise = axios.post("https://mock-api.driven.com.br/api/v6/uol/messages");
-    //mensagens.push(novaMensagem);
+    const promise = axios.post("https://mock-api.driven.com.br/api/v6/uol/messages", novaMensagem);
     promise.then(getMessages);
 
 
@@ -90,6 +90,7 @@ function perguntarNome(){
     requisitarEntrada(nome);
 }
 
+//NOME DO USUÁRIO É ENVIADO PARA O SERVIDOR A FIM DE SER CADASTRADO
 function requisitarEntrada(nome){
     
     const sendName = {
@@ -106,7 +107,6 @@ function entrou(resposta){
     alert("Você está logado");
     const statusCode = resposta.status;
 	console.log(statusCode);
-    //setInterval(verificarStatus,4000);
 }
 
 function tratarErro(erro){
@@ -118,24 +118,16 @@ function tratarErro(erro){
 
 }
 
-function verificarStatus(nome){
-    console.log(nome);
-    const checkUsuario = {
+
+//AVISA AO SERVIDOR QUE O USUÁRIO ESTÁ ONLINE
+function manterConexao(){
+    const userName = {
         name: nome
     }
 
-    const promessa = axios.post("https://mock-api.driven.com.br/api/v6/uol/status", checkUsuario);
-    promessa.then(onlineStatus);
-    promessa.catch(offlineStatus);
+    const promessa = axios.post("https://mock-api.driven.com.br/api/v6/uol/status", userName);
+
 }
 
-function onlineStatus(respVerStatus){
-    alert("Usuário online");
-}
-
-function offlineStatus(erro){
-    alert("Erro");
-    console.log(erro.response.status);
-}
-
-//setInterval(verificarStatus, 4000);
+setInterval(manterConexao,4000);
+setInterval(getMessages, 3000);
