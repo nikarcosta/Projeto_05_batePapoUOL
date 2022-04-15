@@ -1,7 +1,5 @@
 let nome = "";
 let mensagens = [];
-let privacy = "";
-let paraUsuario = "";
     
 
 
@@ -22,6 +20,12 @@ function carregarDados(response){
     console.log(response.data);
     mensagens = response.data;
     printMessages()
+}
+
+function errorGettingMessages(erro){
+    const statusCode = resposta.status;
+    console.log("Failed getting message, error: " + statusCode);
+    
 }
 
 
@@ -68,8 +72,6 @@ function printMessages(){
 
 //ENVIA MENSAGEM DO USUÁRIO PARA A SALA
 function enviarMensagem(){
-
-    paraUsuario = destinatarioMensagem();
    
     const mensagem  = document.querySelector(".mensagem-usuario").value;
     const d = new Date();
@@ -77,42 +79,23 @@ function enviarMensagem(){
 
     const novaMensagem =   {
 		from: nome,
-		to: paraUsuario,
+		to: "Todos",
 		text: mensagem,
-		type: privacy,
+		type: "message",
 		time: hora
 	}
 
     const promise = axios.post("https://mock-api.driven.com.br/api/v6/uol/messages", novaMensagem);
     promise.then(getMessages);
-
-
-}
-
-function destinatarioMensagem(){
-    let destinatario;
-
-    const privado = prompt("É uma mensagem privada? S para sim ou N para não");
-
-    if(privado === "S"|| privado === "s"){
-        destinatario = prompt("Digite o nome do usuário para o qual a mensagem deve ser entregue:");
-        privacy = "private_message";
-        return destinatario;
-
-    }else if(privado === "N" || privado === "n"){
-        destinatario = "Todos";
-        privacy = "message"
-        return destinatario;
-    }
-}
-
-
-function errorGettingMessages(erro){
-    console.log("Failed getting message");
-    const statusCode = resposta.status;
+    promise.catch(sendMessageError);
 
 }
 
+function sendMessageError(erro){
+    const statusCode = erro.status;
+    console.log("Send Message error: " + statusCode);
+    window.location.reload()
+}
 
 function perguntarNome(){
     nome = prompt("Qual é o seu nome?");
@@ -127,20 +110,19 @@ function requisitarEntrada(nome){
     }    
 
     const promessa = axios.post("https://mock-api.driven.com.br/api/v6/uol/participants", sendName);
-    promessa.then(entrou);
-    promessa.catch(tratarErro);
+    promessa.then(logInSucessfull);
+    promessa.catch(logInError);
 }
 
 
-function entrou(resposta){
-    alert("Você está logado");
+function logInSucessfull(resposta){
     const statusCode = resposta.status;
-	console.log(statusCode);
+	console.log("Log in sucessfull: " + statusCode);
 }
 
-function tratarErro(erro){
+function logInError(erro){
     const statusCode = erro.response.status;
-	console.log(statusCode);
+	console.log("Log in Error: " + statusCode);
 
     nome = prompt("O nome de usuário já está em uso. Por gentileza, digite outro:");
     requisitarEntrada(nome);
@@ -155,7 +137,19 @@ function manterConexao(){
     }
 
     const promessa = axios.post("https://mock-api.driven.com.br/api/v6/uol/status", userName);
+    promessa.then(connectionOk);
+    promessa.catch(connectionError);
 
+}
+
+function connectionOk(resposta){
+    const statusCode = resposta.status;
+    console.log("Connection status: " + statusCode);
+}
+
+function connectionError(erro){
+    const statusCode = erro.status;
+    console.log("Connection error: " + statusCode);
 }
 
 setInterval(manterConexao,4000);
