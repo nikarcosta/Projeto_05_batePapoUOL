@@ -152,5 +152,12 @@ function connectionError(erro){
     console.log("Connection error: " + statusCode);
 }
 
+// PERMITE O ENVIO DE MENSAGENS COM A TECLA ENTER
+document.addEventListener('keydown', function(e){
+    if (e.key === "Enter") { 
+        enviarMensagem();
+        }
+});
+
 setInterval(manterConexao,4000);
 setInterval(getMessages, 3000);
