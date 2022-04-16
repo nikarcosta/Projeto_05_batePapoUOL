@@ -2,9 +2,44 @@ let nome = "";
 let mensagens = [];
     
 
-
-perguntarNome();
 getMessages();
+
+
+function requisitarEntrada(){
+   
+    nome = document.querySelector(".userName").value;
+
+    if(nome === ""){
+        alert("Digite seu nome");
+        return;
+    }
+
+    const sendName = {
+        name: nome
+    }    
+
+    const promessa = axios.post("https://mock-api.driven.com.br/api/v6/uol/participants", sendName);
+    promessa.then(logInSucessfull);
+    promessa.catch(logInError);
+}
+
+
+function logInSucessfull(resposta){
+    const statusCode = resposta.status;
+	console.log("Log in sucessfull: " + statusCode);
+
+    document.querySelector(".logIn-Page").classList.add("escondido");
+    document.querySelector(".sala-BatePapo").classList.remove("escondido");
+}
+
+
+function logInError(erro){
+    const statusCode = erro.response.status;
+	console.log("Log in Error: " + statusCode);
+
+    alert("O nome de usuário já está em uso. Por gentileza, digite outro");
+    document.querySelector(".userName").value = "";
+}
 
 
 //FAZ O REQUEST PARA BUSCAR AS MENSAGENS NA API
@@ -65,15 +100,18 @@ function printMessages(){
         divScroll.scrollIntoView();
     }
         
-}
-    
+}   
          
-
 
 //ENVIA MENSAGEM DO USUÁRIO PARA A SALA
 function enviarMensagem(){
    
     const mensagem  = document.querySelector(".mensagem-usuario").value;
+
+    //APAGA INPUT FIELD
+    document.querySelector(".mensagem-usuario").value = "";
+
+
     const d = new Date();
     let hora = d.toLocaleTimeString();
 
@@ -95,38 +133,6 @@ function sendMessageError(erro){
     const statusCode = erro.status;
     console.log("Send Message error: " + statusCode);
     window.location.reload()
-}
-
-function perguntarNome(){
-    nome = prompt("Qual é o seu nome?");
-    requisitarEntrada(nome);
-}
-
-//NOME DO USUÁRIO É ENVIADO PARA O SERVIDOR A FIM DE SER CADASTRADO
-function requisitarEntrada(nome){
-    
-    const sendName = {
-        name: nome
-    }    
-
-    const promessa = axios.post("https://mock-api.driven.com.br/api/v6/uol/participants", sendName);
-    promessa.then(logInSucessfull);
-    promessa.catch(logInError);
-}
-
-
-function logInSucessfull(resposta){
-    const statusCode = resposta.status;
-	console.log("Log in sucessfull: " + statusCode);
-}
-
-function logInError(erro){
-    const statusCode = erro.response.status;
-	console.log("Log in Error: " + statusCode);
-
-    nome = prompt("O nome de usuário já está em uso. Por gentileza, digite outro:");
-    requisitarEntrada(nome);
-
 }
 
 
@@ -153,7 +159,7 @@ function connectionError(erro){
 }
 
 // PERMITE O ENVIO DE MENSAGENS COM A TECLA ENTER
-document.addEventListener('keydown', function(e){
+document.querySelector(".mensagem-usuario").addEventListener('keydown', function(e){
     if (e.key === "Enter") { 
         enviarMensagem();
         }
