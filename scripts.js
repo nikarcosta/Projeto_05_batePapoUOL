@@ -1,16 +1,26 @@
 let nome = "";
 let mensagens = [];
+let participantes = [];
+let contatoSelecionado = "";
+let paraUsuario = "Todos";
+let privacidadeEscolhida = "message";
     
+function logInButton(){
+    document.querySelector(".entrar").classList.add("escondido");
+    document.querySelector(".carregando").classList.remove("escondido");
+    setTimeout(requisitarEntrada,2000);
+}
 
-getMessages();
 
-
+//CADASTRA E LOGA O USUÁRIO NA SALA DE BATE-PAPO
 function requisitarEntrada(){
    
     nome = document.querySelector(".userName").value;
 
     if(nome === ""){
         alert("Digite seu nome");
+        document.querySelector(".entrar").classList.remove("escondido");
+        document.querySelector(".carregando").classList.add("escondido");   
         return;
     }
 
@@ -25,6 +35,14 @@ function requisitarEntrada(){
 
 
 function logInSucessfull(resposta){
+
+    getMessages();
+    buscarParticipantes();
+
+    setInterval(manterConexao,4000);    
+    setInterval(getMessages, 3000);
+    setInterval(buscarParticipantes, 10000);
+
     const statusCode = resposta.status;
 	console.log("Log in sucessfull: " + statusCode);
 
@@ -39,6 +57,9 @@ function logInError(erro){
 
     alert("O nome de usuário já está em uso. Por gentileza, digite outro");
     document.querySelector(".userName").value = "";
+    document.querySelector(".entrar").classList.remove("escondido");
+    document.querySelector(".carregando").classList.add("escondido");
+
 }
 
 
@@ -108,6 +129,10 @@ function enviarMensagem(){
    
     const mensagem  = document.querySelector(".mensagem-usuario").value;
 
+    if(mensagem === ""){
+        return;
+    }
+
     //APAGA INPUT FIELD
     document.querySelector(".mensagem-usuario").value = "";
 
@@ -117,9 +142,9 @@ function enviarMensagem(){
 
     const novaMensagem =   {
 		from: nome,
-		to: "Todos",
+		to: paraUsuario,
 		text: mensagem,
-		type: "message",
+		type: privacidadeEscolhida,
 		time: hora
 	}
 
@@ -156,6 +181,8 @@ function connectionOk(resposta){
 function connectionError(erro){
     const statusCode = erro.status;
     console.log("Connection error: " + statusCode);
+    alert("Você foi desconectado");
+    window.location.reload();
 }
 
 // PERMITE O ENVIO DE MENSAGENS COM A TECLA ENTER
@@ -165,5 +192,107 @@ document.querySelector(".mensagem-usuario").addEventListener('keydown', function
         }
 });
 
-setInterval(manterConexao,4000);
-setInterval(getMessages, 3000);
+
+//ABRE A SIDEBAR
+function showSidebar(){
+    document.querySelector(".sidebar").classList.remove("escondido");
+    document.querySelector(".contatos-privacidade").classList.remove("escondido");
+}
+
+
+//FECHA A SIDEBAR
+function closeSidebar(){
+    document.querySelector(".sidebar").classList.add("escondido");
+    document.querySelector(".contatos-privacidade").classList.add("escondido");
+}
+
+
+//BUSCA LISTA DE PARTICIPANTES DO CHAT
+function buscarParticipantes(){
+
+    const promessa = axios.get("https://mock-api.driven.com.br/api/v6/uol/participants");
+    console.log(promessa);
+    promessa.then(carregarParticipantes);
+    promessa.catch(errorGettingParticipants);
+    
+}
+
+function carregarParticipantes(response){
+    console.log(response.data);
+    let temp = response.data;
+
+
+    console.log(participantes);
+      
+
+    let result2 = temp.filter(person => participantes.every(person2 => !person2.name.includes(person.name)))
+    console.log(result2);
+
+    participantes = [];
+    participantes = result2;
+
+    console.log(participantes);    
+
+    printParticipantes();
+}
+
+function errorGettingParticipants(erro){
+    const statusCode = resposta.status;
+    console.log("Failed getting participants list, error: " + statusCode);
+    
+}
+
+
+//IMPRIME LISTA DE PARTICIPANTES
+function printParticipantes(){
+    const contatosDisplay = document.querySelector(".contatos");
+    
+    for(let i = 0; i < participantes.length; i++){
+            contatosDisplay.innerHTML += `<div class="nome-contato" onclick="selecionaContato(this)"><div><ion-icon name="person-circle"></ion-icon></div><div class="nomeParticipante">${participantes[i].name}</div><div class="icon"><ion-icon name="checkmark-outline"></ion-icon></div></div>`;
+    }
+    
+}
+
+
+//SELECIONA CONTATO PARA MANDAR MENSAGEM
+function selecionaContato(nomeContato){
+    let contatoSelected = document.querySelector(".contatos").querySelector(".selecionado");
+    
+    if(contatoSelected !== null){
+        contatoSelected.classList.remove("selecionado");
+    }
+    
+    nomeContato.classList.add("selecionado");
+    paraUsuario = document.querySelector(".selecionado > .nomeParticipante").innerHTML;
+    console.log(paraUsuario);
+}
+
+
+//SELECIONA O TIPO DE MENSAGEM (PRIVADA OU PÚBLICA)
+function selecionaPrivacidade(tipoPrivacidade){
+   
+    let privacidadeSelected = document.querySelector(".tipos-privacidade").querySelector(".selecionado");
+    
+    if(privacidadeSelected !== null){
+        privacidadeSelected.classList.remove("selecionado");
+    }
+    
+    tipoPrivacidade.classList.add("selecionado");
+    privacidadeEscolha = document.querySelector(".selecionado > .privacidade").innerHTML;
+    console.log(privacidadeEscolha);
+    privacidadeEscolhida = corrigindoPrivacidade(privacidadeEscolha);
+
+}
+
+
+//CONVERTE O TIPO DE PRIVACIDADE ANTES DE MANDAR PARA A API
+function corrigindoPrivacidade(elemento){
+
+    if(elemento === "Público"){
+        return "message";
+    }
+    if(elemento === "Reservadamente"){
+        return "private_message";
+    }
+
+}

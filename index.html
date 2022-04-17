@@ -9,28 +9,59 @@
     <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
+    <!--SIDEBAR-->
+    <div class="sidebar escondido" onclick="closeSidebar()">
+    </div>
+    <div class="contatos-privacidade escondido">
+        <div class="container-contatos">
+            <div class="titulo-contatos">Escolha um contato para enviar mensagem</div>
+            <div class="contatos">
+                <div class="nome-contato selecionado" onclick="selecionaContato(this)"><div><ion-icon name="people"></ion-icon></div><div class="nomeParticipante">Todos</div><div class="icon"><ion-icon name="checkmark-outline"></ion-icon></div></div>
+                <!--LISTA DE CONTATOS É INSERIDA AQUI-->
+            </div>
+            <div class="tipos-privacidade">
+                <div class="titulo-privacidade">Escolha a visibilidade</div>
+                <div class="escolha-privacidade selecionado" onclick="selecionaPrivacidade(this)"><div><ion-icon name="lock-open"></ion-icon></div><div class="privacidade">Público</div><div class="icon"><ion-icon name="checkmark-outline"></ion-icon></div></div>
+                <div class="escolha-privacidade" onclick="selecionaPrivacidade(this)"><div><ion-icon name="lock-closed"></ion-icon></div><div class="privacidade">Reservadamente</div> <div class="icon"><ion-icon name="checkmark-outline"></ion-icon></div></div>
+            </div>
+        </div>
+  </div>
 
+    <!--LOG-IN-PAGE-->
     <div class="logIn-Page">
         <div class="logo-logIn">
             <img src="/images/logo 1.png">
         </div>
         <div class="entrar">
-            <div>
-                <input type="text" class="userName" placeholder="Digite seu nome">
+            <div class="container-entrar">
+                <div>
+                    <input type="text" class="userName" placeholder="Digite seu nome">
+                </div>
+                <div>
+                    <button class="button-logIn" onclick="logInButton()"><span class="formato">Entrar</span></button>
+                </div>
+            </div>                           
+        </div>
+        <div class="carregando escondido">
+            <div class="container-carregando">
+                <div><img src="/images/loading.gif"></div>
+            <div class="formato">Entrando</div>
             </div>
-            <div>
-                <button class="button-logIn" onclick="requisitarEntrada()"><span>Entrar</span></button>
-            </div>
+            
         </div>
     </div>
 
+    <!--SALA DE BATE-PAPO-->
     <div class="sala-BatePapo escondido">
-        <div class="topo"><div class="logo"><img src="/images/logo 1.png"></div><div class="ion-icon"><ion-icon name="people"></ion-icon></div></div>
-        <div class="container"></div>
+        <div class="topo"><div class="logo"><img src="/images/logo 1.png"></div><div class="ion-icon" onclick="showSidebar()"><ion-icon name="people"></ion-icon></div></div>
+        <div class="container">
+            <!--MENSAGENS DOS USUÁRIOS SÃO INSERIDAS AQUI-->
+        </div>
         <div class="scroll"></div>        
         <div class="enviar-mensagem"><input type="text" class="mensagem-usuario" placeholder="Escreva aqui..."><button onclick="enviarMensagem()"><ion-icon name="paper-plane-outline"></ion-icon></button></div>
     </div>
-    
+
+        
     <script src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="scripts.js"></script>
