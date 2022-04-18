@@ -116,7 +116,7 @@ function printMessages(){
                 </div>`;}
     
         }
-            
+        
         const divScroll = document.querySelector(".scroll");
         divScroll.scrollIntoView();
     }
@@ -265,6 +265,8 @@ function selecionaContato(nomeContato){
     nomeContato.classList.add("selecionado");
     paraUsuario = document.querySelector(".selecionado > .nomeParticipante").innerHTML;
     console.log(paraUsuario);
+
+    dadosMensagem()
 }
 
 
@@ -278,10 +280,11 @@ function selecionaPrivacidade(tipoPrivacidade){
     }
     
     tipoPrivacidade.classList.add("selecionado");
-    privacidadeEscolha = document.querySelector(".selecionado > .privacidade").innerHTML;
+    let privacidadeEscolha = document.querySelector(".selecionado > .privacidade").innerHTML;
     console.log(privacidadeEscolha);
     privacidadeEscolhida = corrigindoPrivacidade(privacidadeEscolha);
 
+    dadosMensagem()
 }
 
 
@@ -294,5 +297,21 @@ function corrigindoPrivacidade(elemento){
     if(elemento === "Reservadamente"){
         return "private_message";
     }
+
+}
+
+//INFORMA NO CAMPO DE MENSAGEM PARA QUEM A MENSAGEM ESTÁ SENDO ENVIADA
+function dadosMensagem(){
+
+    let setPrivacidade = privacidadeEscolhida;
+
+    if(privacidadeEscolhida === "message"){
+        setPrivacidade = "Público";
+    }else {
+        setPrivacidade = "Reservadamente";
+    }
+
+    let trocarDados = document.querySelector(".enviando-para").innerHTML = "";
+    trocarDados = document.querySelector(".enviando-para").innerHTML = `Enviando para ${paraUsuario} (${setPrivacidade})`;
 
 }

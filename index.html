@@ -45,7 +45,7 @@
         <div class="carregando escondido">
             <div class="container-carregando">
                 <div><img src="/images/loading.gif"></div>
-            <div class="formato">Entrando</div>
+            <div class="formato">Entrando...</div>
             </div>
             
         </div>
@@ -56,9 +56,15 @@
         <div class="topo"><div class="logo"><img src="/images/logo 1.png"></div><div class="ion-icon" onclick="showSidebar()"><ion-icon name="people"></ion-icon></div></div>
         <div class="container">
             <!--MENSAGENS DOS USUÁRIOS SÃO INSERIDAS AQUI-->
-        </div>
+        </div>   
         <div class="scroll"></div>        
-        <div class="enviar-mensagem"><input type="text" class="mensagem-usuario" placeholder="Escreva aqui..."><button onclick="enviarMensagem()"><ion-icon name="paper-plane-outline"></ion-icon></button></div>
+        <div class="enviar-mensagem">
+            <div>
+                <div class="placeholder"><input type="text" class="mensagem-usuario" placeholder="Escreva aqui..."></div>
+                <div class="enviando-para font">Enviando para Todos (Público)</div>
+            </div>
+            
+            <button onclick="enviarMensagem()"><ion-icon name="paper-plane-outline"></ion-icon></button></div>
     </div>
 
         
