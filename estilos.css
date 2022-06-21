@@ -224,6 +224,8 @@ button > ion-icon {
     background: rgba(0, 0, 0, 0.6);
     position: fixed;
     z-index: 2;
+
+    
 }
 
 .contatos-privacidade {
